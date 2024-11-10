@@ -11,6 +11,8 @@ import (
 	"gorm.io/gorm"
 )
 
+const defaultTraceName = "[DEFAULT_SQLService]"
+
 type Database = gorm.DB
 type Connection = sql.DB
 
@@ -31,18 +33,30 @@ type ConnectConfig struct {
 	Password string
 }
 
+type ServiceConfig struct {
+	IsLogging  bool
+	Logger     *ealogger.Logger
+	LoggerMode ealogger.Mode
+
+	TraceName string
+}
+
 type Service struct {
 	c *ConnectConfig
 	l *ealogger.Logger
 
-	conn     *Connection
-	database *Database
+	Conn     *Connection
+	Database *Database
 
 	traceName string
 }
 
 func (s *Service) Init() error {
 	s.l.DebugT(s.traceName, "Initializing sql service", s.c.Client)
+
+	if s.Conn != nil || s.Database != nil {
+		return nil
+	}
 
 	URL := url.NewURLConnectionString(s.c.Client, fmt.Sprintf("%s:%d", s.c.Host, s.c.Port), "", s.c.Database, s.c.User, s.c.Password)
 
@@ -75,8 +89,8 @@ func (s *Service) Init() error {
 		return err
 	}
 
-	s.database = db
-	s.conn = sqlDB
+	s.Database = db
+	s.Conn = sqlDB
 
 	s.l.DebugT(s.traceName, "Postgres service initialized", s.c.Client)
 
@@ -84,26 +98,59 @@ func (s *Service) Init() error {
 }
 
 func (s *Service) Disconnect() error {
-	if err := s.conn.Close(); err != nil {
+	if s.Conn == nil {
+		return fmt.Errorf("sql client not initialized")
+	}
+
+	if err := s.Conn.Close(); err != nil {
 		s.l.ErrorT(s.traceName, "Failed to close connection", s.c.Client, err)
+		return err
 	}
 
 	return nil
 }
 
 func (s *Service) GetConnect() *Connection {
-	return s.conn
+	return s.Conn
 }
 
 func (s *Service) GetDatabase() *Database {
-	return s.database
+	return s.Database
 }
 
-func NewService(c *ConnectConfig, l *ealogger.Logger, traceName string) *Service {
+func (s *Service) SetConnection(connection *Connection) {
+	s.Conn = connection
+}
+
+func (s *Service) SetDatabase(db *Database) {
+	s.Database = db
+}
+
+func (s *Service) SetTraceName(traceName string) {
+	s.traceName = traceName
+}
+
+func (s *Service) SetLogger(logger *ealogger.Logger) {
+	s.l = logger
+}
+
+func NewService(c *ConnectConfig, sc *ServiceConfig) *Service {
+	if sc == nil {
+		sc = &ServiceConfig{
+			IsLogging: true,
+			Logger:    ealogger.NewLoggerWithMode(ealogger.DevMode),
+			TraceName: defaultTraceName,
+		}
+	} else {
+		if sc.IsLogging && sc.Logger == nil {
+			sc.Logger = ealogger.NewLoggerWithMode(ealogger.DevMode)
+		}
+	}
+
 	return &Service{
 		c: c,
-		l: l,
+		l: sc.Logger,
 
-		traceName: fmt.Sprintf("[%s_SQLService]", traceName),
+		traceName: sc.TraceName,
 	}
 }

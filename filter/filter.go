@@ -1,4 +1,4 @@
-package easql
+package filter
 
 import (
 	"github.com/eris-apple/eaapi"

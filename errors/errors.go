@@ -1,6 +1,8 @@
-package easql
+package errors
 
-import "errors"
+import (
+	"errors"
+)
 
 var (
 	ErrRecordNotFound   = errors.New("record not found")
