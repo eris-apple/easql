@@ -9,6 +9,8 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"time"
 )
 
 const defaultTraceName = "[DEFAULT_SQLService]"
@@ -42,8 +44,9 @@ type ServiceConfig struct {
 }
 
 type Service struct {
-	c *ConnectConfig
-	l *ealogger.Logger
+	c         *ConnectConfig
+	l         *ealogger.Logger
+	IsLogging bool
 
 	Conn     *Connection
 	Database *Database
@@ -52,7 +55,7 @@ type Service struct {
 }
 
 func (s *Service) Init() error {
-	s.l.DebugT(s.traceName, "Initializing sql service", s.c.Client)
+	s.l.DebugT(s.traceName, fmt.Sprintf("Initializing sql service: %s", s.c.Client))
 
 	if s.Conn != nil || s.Database != nil {
 		return nil
@@ -69,41 +72,61 @@ func (s *Service) Init() error {
 	case SQLite:
 		dialect = sqlite.Open(URL)
 	default:
+		s.l.ErrorT(s.traceName, fmt.Sprintf("SQL client not support: %s", s.c.Client))
 		return fmt.Errorf("sql client not support: %s", s.c.Client)
 	}
 
-	db, err := gorm.Open(dialect, &gorm.Config{TranslateError: true})
+	config := &gorm.Config{
+		TranslateError: true,
+	}
+
+	if s.IsLogging {
+		newLogger := logger.New(
+			s.l,
+			logger.Config{
+				SlowThreshold:             time.Second,
+				LogLevel:                  logger.Silent,
+				IgnoreRecordNotFoundError: true,
+				ParameterizedQueries:      true,
+				Colorful:                  false,
+			},
+		)
+		config.Logger = newLogger
+	}
+
+	db, err := gorm.Open(dialect, config)
 	if err != nil {
-		s.l.ErrorT(s.traceName, "Failed to connect to sql database", s.c.Client, err)
+		s.l.ErrorT(s.traceName, fmt.Sprintf("Failed to connect to sql database: %s, error: %s", s.c.Client, err))
 		return err
 	}
 
 	sqlDB, err := db.DB()
 	if err != nil {
-		s.l.ErrorT(s.traceName, "Failed to connect to sql database", s.c.Client, err)
+		s.l.ErrorT(s.traceName, fmt.Sprintf("Failed to connect to sql database: %s, error: %s", s.c.Client, err))
 		return err
 	}
 
 	if err := sqlDB.Ping(); err != nil {
-		s.l.ErrorT(s.traceName, "Failed to ping sql database", s.c.Client, err)
+		s.l.ErrorT(s.traceName, fmt.Sprintf("Failed to ping sql database: %s, error: %s", s.c.Client, err))
 		return err
 	}
 
 	s.Database = db
 	s.Conn = sqlDB
 
-	s.l.DebugT(s.traceName, "Postgres service initialized", s.c.Client)
+	s.l.DebugT(s.traceName, fmt.Sprintf("SQL Service initialized: %s", s.c.Client))
 
 	return nil
 }
 
 func (s *Service) Disconnect() error {
 	if s.Conn == nil {
+		s.l.ErrorT(s.traceName, fmt.Sprintf("SQL client not initialized: %s", s.c.Client))
 		return fmt.Errorf("sql client not initialized")
 	}
 
 	if err := s.Conn.Close(); err != nil {
-		s.l.ErrorT(s.traceName, "Failed to close connection", s.c.Client, err)
+		s.l.ErrorT(s.traceName, fmt.Sprintf("Failed to close connection: %s, error: %s", s.c.Client, err))
 		return err
 	}
 
@@ -148,8 +171,9 @@ func NewService(c *ConnectConfig, sc *ServiceConfig) *Service {
 	}
 
 	return &Service{
-		c: c,
-		l: sc.Logger,
+		c:         c,
+		l:         sc.Logger,
+		IsLogging: sc.IsLogging,
 
 		traceName: sc.TraceName,
 	}
