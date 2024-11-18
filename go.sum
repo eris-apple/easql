@@ -21,12 +21,6 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/eris-apple/eaapi v0.0.1 h1:G8QamAWMUjWNo1Yd6O3e8UlVBBeEcdDAZugzqK1fDTQ=
 github.com/eris-apple/eaapi v0.0.1/go.mod h1:hHI4AJHioSnHiQ2xfqALttpkP44rM0/lcLwK6lzmCJs=
-github.com/eris-apple/ealogger v0.0.3 h1:ypQ+U3o8Aimj+vTq/JdMQtekg3xHNO3lFUs9fxcHDFE=
-github.com/eris-apple/ealogger v0.0.3/go.mod h1:bJl7gfTYH2SZtO4HxyU7E07COK3lLDbADDd3ph7XmlI=
-github.com/eris-apple/ealogger v0.0.5 h1:Xz3K/FFhj1QeG+Oaltf2ub52nVntn9II57GmJq6uO5I=
-github.com/eris-apple/ealogger v0.0.5/go.mod h1:bJl7gfTYH2SZtO4HxyU7E07COK3lLDbADDd3ph7XmlI=
-github.com/eris-apple/ealogger v0.0.6 h1:jdmejSfl0WiqDoqKa9iz6E6+v6bl6YDXSX/BZ0ULORk=
-github.com/eris-apple/ealogger v0.0.6/go.mod h1:bJl7gfTYH2SZtO4HxyU7E07COK3lLDbADDd3ph7XmlI=
 github.com/eris-apple/ealogger v0.0.7 h1:j3PvRvb6caYtXYzZSeWnSDZnqfZnbMLPZ4WqaQHmBZo=
 github.com/eris-apple/ealogger v0.0.7/go.mod h1:bJl7gfTYH2SZtO4HxyU7E07COK3lLDbADDd3ph7XmlI=
 github.com/eris-apple/eautils v0.0.2 h1:/FCZZ211yPF5eBiRh19lwTCUOOmQrj7OQIoqSW+u5/s=
