@@ -134,3 +134,26 @@ func TestIsEmptyValue(t *testing.T) {
 		})
 	}
 }
+
+func TestWhere_String(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    where.Where
+		expected string
+	}{
+		{"Empty map", where.Where{}, ""},
+		{"Empty value", where.Where{"key": ""}, "key="},
+		{"Empty key", where.Where{"": "value"}, "=value"},
+		{"Correct map", where.Where{"key": "value"}, "key=value"},
+		{"Multiple", where.Where{"key": "value", "key2": "value2"}, "key=value key2=value2"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := tt.input.String()
+			if result != tt.expected {
+				t.Errorf("expected: %v, got: %v", tt.expected, result)
+			}
+		})
+	}
+}

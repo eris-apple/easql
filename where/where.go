@@ -5,7 +5,25 @@ import (
 	"reflect"
 )
 
-type Where = map[string]interface{}
+type Where map[string]interface{}
+
+func (w *Where) String() string {
+	if w == nil {
+		return ""
+	}
+
+	i := 0
+	result := ""
+	for k, v := range *w {
+		result += fmt.Sprintf("%v=%v", k, v)
+		if i != len(*w)-1 {
+			result += " "
+		}
+		i++
+	}
+
+	return result
+}
 
 func NewWhereCondition(obj interface{}, includeEmpty bool) (Where, error) {
 	return structToMap(obj, includeEmpty)

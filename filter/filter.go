@@ -1,6 +1,7 @@
 package filter
 
 import (
+	"fmt"
 	"github.com/eris-apple/eaapi"
 	"github.com/gin-gonic/gin"
 	"strconv"
@@ -10,6 +11,10 @@ type Filter struct {
 	Limit  int
 	Offset int
 	Order  string
+}
+
+func (f *Filter) String() string {
+	return fmt.Sprintf("limit=%d offset=%d order=%s", f.Limit, f.Offset, f.Order)
 }
 
 func GetDefaultsFilter(filter *Filter, prefix ...string) *Filter {
