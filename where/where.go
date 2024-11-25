@@ -7,6 +7,10 @@ import (
 
 type Where map[string]interface{}
 
+func (w *Where) Map() map[string]interface{} {
+	return *w
+}
+
 func (w *Where) String() string {
 	if w == nil {
 		return ""
