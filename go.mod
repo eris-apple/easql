@@ -5,7 +5,7 @@ go 1.23.1
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/eris-apple/eaapi v0.0.1
-	github.com/eris-apple/ealogger v0.0.7
+	github.com/eris-apple/ealogger v0.1.1
 	github.com/eris-apple/eautils v0.0.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/stretchr/testify v1.9.0
@@ -16,6 +16,7 @@ require (
 )
 
 require (
+	github.com/Graylog2/go-gelf v0.0.0-20170811154226-7ebf4f536d8f // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/bytedance/sonic v1.11.6 // indirect
 	github.com/bytedance/sonic/loader v0.1.1 // indirect

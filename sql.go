@@ -3,7 +3,7 @@ package easql
 import (
 	"database/sql"
 	"fmt"
-	"github.com/eris-apple/ealogger"
+	"github.com/eris-apple/ealogger/ealogger"
 	"github.com/eris-apple/eautils/url"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-const defaultTraceName = "[DEFAULT_SQLService]"
+const defaultTraceName = "SQL_SERVICE"
 
 type Database = gorm.DB
 type Connection = sql.DB
@@ -45,7 +45,7 @@ type ServiceConfig struct {
 
 type Service struct {
 	c         *ConnectConfig
-	l         *ealogger.Logger
+	log       *ealogger.Entry
 	IsLogging bool
 
 	Conn     *Connection
@@ -55,7 +55,7 @@ type Service struct {
 }
 
 func (s *Service) Init() error {
-	s.l.DebugT(s.traceName, fmt.Sprintf("Initializing sql service: %s", s.c.Client))
+	s.log.Debugf("Initializing sql service: %s", s.c.Client)
 
 	if s.Conn != nil || s.Database != nil {
 		return nil
@@ -72,7 +72,7 @@ func (s *Service) Init() error {
 	case SQLite:
 		dialect = sqlite.Open(URL)
 	default:
-		s.l.ErrorT(s.traceName, fmt.Sprintf("SQL client not support: %s", s.c.Client))
+		s.log.Errorf("SQL client not support: %s", s.c.Client)
 		return fmt.Errorf("sql client not support: %s", s.c.Client)
 	}
 
@@ -82,7 +82,7 @@ func (s *Service) Init() error {
 
 	if s.IsLogging {
 		newLogger := logger.New(
-			s.l,
+			s.log,
 			logger.Config{
 				SlowThreshold:             time.Second,
 				LogLevel:                  logger.Silent,
@@ -96,37 +96,37 @@ func (s *Service) Init() error {
 
 	db, err := gorm.Open(dialect, config)
 	if err != nil {
-		s.l.ErrorT(s.traceName, fmt.Sprintf("Failed to connect to sql database: %s, error: %s", s.c.Client, err))
+		s.log.Errorf("Failed to connect to sql database: %s, error: %s", s.c.Client, err)
 		return err
 	}
 
 	sqlDB, err := db.DB()
 	if err != nil {
-		s.l.ErrorT(s.traceName, fmt.Sprintf("Failed to connect to sql database: %s, error: %s", s.c.Client, err))
+		s.log.Errorf("Failed to connect to sql database: %s, error: %s", s.c.Client, err)
 		return err
 	}
 
 	if err := sqlDB.Ping(); err != nil {
-		s.l.ErrorT(s.traceName, fmt.Sprintf("Failed to ping sql database: %s, error: %s", s.c.Client, err))
+		s.log.Errorf("Failed to ping sql database: %s, error: %s", s.c.Client, err)
 		return err
 	}
 
 	s.Database = db
 	s.Conn = sqlDB
 
-	s.l.DebugT(s.traceName, fmt.Sprintf("SQL Service initialized: %s", s.c.Client))
+	s.log.Debugf("SQL Service initialized: %s", s.c.Client)
 
 	return nil
 }
 
 func (s *Service) Disconnect() error {
 	if s.Conn == nil {
-		s.l.ErrorT(s.traceName, fmt.Sprintf("SQL client not initialized: %s", s.c.Client))
+		s.log.Errorf("SQL client not initialized: %s", s.c.Client)
 		return fmt.Errorf("sql client not initialized")
 	}
 
 	if err := s.Conn.Close(); err != nil {
-		s.l.ErrorT(s.traceName, fmt.Sprintf("Failed to close connection: %s, error: %s", s.c.Client, err))
+		s.log.Errorf("Failed to close connection: %s, error: %s", s.c.Client, err)
 		return err
 	}
 
@@ -153,8 +153,8 @@ func (s *Service) SetTraceName(traceName string) {
 	s.traceName = traceName
 }
 
-func (s *Service) SetLogger(logger *ealogger.Logger) {
-	s.l = logger
+func (s *Service) SetLogger(logger *ealogger.Entry) {
+	s.log = logger
 }
 
 func NewService(c *ConnectConfig, sc *ServiceConfig) *Service {
@@ -172,9 +172,7 @@ func NewService(c *ConnectConfig, sc *ServiceConfig) *Service {
 
 	return &Service{
 		c:         c,
-		l:         sc.Logger,
+		log:       sc.Logger.WithName(sc.TraceName),
 		IsLogging: sc.IsLogging,
-
-		traceName: sc.TraceName,
 	}
 }

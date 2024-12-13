@@ -1,5 +1,7 @@
 github.com/DATA-DOG/go-sqlmock v1.5.2 h1:OcvFkGmslmlZibjAjaHm3L//6LiuBgolP7OputlJIzU=
 github.com/DATA-DOG/go-sqlmock v1.5.2/go.mod h1:88MAG/4G7SMwSE3CeA0ZKzrT5CiOU3OJ+JlNzwDqpNU=
+github.com/Graylog2/go-gelf v0.0.0-20170811154226-7ebf4f536d8f h1:xMWj7GzE4gCkm8e+661/GJHDXr4h7/jt4kM1Vvr9c5k=
+github.com/Graylog2/go-gelf v0.0.0-20170811154226-7ebf4f536d8f/go.mod h1:fBaQWrftOD5CrVCUfoYGHs4X4VViTuGOXA8WloCjTY0=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1 h1:HwpRHbFMcZLEVr42D4p7XBqjyuxQH5SMiErDT4WkJ2k=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1/go.mod h1:uYgXzlJ7ZpABp8OJ+exZzJJhRNQ2ASbcXHWsFqH8hp8=
 github.com/bytedance/sonic v1.11.6 h1:oUp34TzMlL+OY1OUWxHqsdkgC/Zfc85zGqw9siXjrc0=
@@ -21,8 +23,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/eris-apple/eaapi v0.0.1 h1:G8QamAWMUjWNo1Yd6O3e8UlVBBeEcdDAZugzqK1fDTQ=
 github.com/eris-apple/eaapi v0.0.1/go.mod h1:hHI4AJHioSnHiQ2xfqALttpkP44rM0/lcLwK6lzmCJs=
-github.com/eris-apple/ealogger v0.0.7 h1:j3PvRvb6caYtXYzZSeWnSDZnqfZnbMLPZ4WqaQHmBZo=
-github.com/eris-apple/ealogger v0.0.7/go.mod h1:bJl7gfTYH2SZtO4HxyU7E07COK3lLDbADDd3ph7XmlI=
+github.com/eris-apple/ealogger v0.1.1 h1:cQ90OpbTnXCDIZl8O2VXNxEZxQmSLApBtxiBh/dhsBM=
+github.com/eris-apple/ealogger v0.1.1/go.mod h1:HMRHLw5Ojd9lcCvFaINc3ZMJhAYGxBxMgJPoL7rplOE=
 github.com/eris-apple/eautils v0.0.2 h1:/FCZZ211yPF5eBiRh19lwTCUOOmQrj7OQIoqSW+u5/s=
 github.com/eris-apple/eautils v0.0.2/go.mod h1:ijHJ1DyohSo2w/GPew6RjoYNPM5row+gy5RTuYd4AY0=
 github.com/gabriel-vasile/mimetype v1.4.3 h1:in2uUcidCuFcDKtdcBxlR0rJ1+fsokWf+uqxgUFjbI0=
